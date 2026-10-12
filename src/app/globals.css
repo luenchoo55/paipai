@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  /* 色彩：深褐底、暗金線、朱紅點綴 */
+  --color-ground: #1a100d;
+  --color-haze: #3b1a15;
+  --color-surface: #24150f;
+  --color-line: #5c4630;
+  --color-ink: #f2e8da;
+  --color-muted: #b5a48e;
+  --color-gold: #d9ae5f;
+  --color-gold-bright: #f0cf8a;
+  --color-vermilion: #b8392e;
+  --color-vermilion-soft: #4a1f1a;
+
+  /* 參拜模式：再壓暗一階 */
+  --color-night: #120b09;
+  --color-night-surface: #1e130f;
+  --color-night-text: #e8dccb;
+
+  --font-serif: var(--font-noto-serif-tc), "Noto Serif TC", serif;
+  --font-sans: var(--font-noto-sans-tc), "Noto Sans TC", system-ui, sans-serif;
+
+  --radius-frame: 3px;
+}
+
+html {
+  color-scheme: dark;
+  /* 捲動與鍵盤聚焦時，避開頂部導覽列與底部固定按鈕 */
+  scroll-padding-top: 5rem;
+  scroll-padding-bottom: 6rem;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* 香煙般的暗紅光暈，固定不隨捲動 */
+.haze::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 45% at 18% 12%, rgb(91 32 24 / 0.55), transparent 70%),
+    radial-gradient(55% 40% at 88% 38%, rgb(59 26 21 / 0.7), transparent 72%),
+    radial-gradient(70% 50% at 40% 100%, rgb(74 31 26 / 0.5), transparent 70%);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold-bright);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
