@@ -1,7 +1,8 @@
 import { X } from "lucide-react";
+import { MusicToggle } from "@/components/music/MusicToggle";
 import { IconLink } from "@/components/ui/IconButton";
 
-/** 頂部：關閉、題號、分段進度條（完成金色、目前朱紅、未開始暗色） */
+/** 頂部：關閉、題號、分段進度條（完成金色、目前朱紅、未開始暗色）、背景音樂 */
 export function VisitProgress({ index, total }: { index: number; total: number }) {
   return (
     <div className="flex items-center gap-3">
@@ -30,6 +31,7 @@ export function VisitProgress({ index, total }: { index: number; total: number }
           ))}
         </div>
       </div>
+      <MusicToggle className="-mr-2" />
     </div>
   );
 }

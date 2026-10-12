@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_TC, Noto_Serif_TC } from "next/font/google";
-import { MusicRouteGuard } from "@/components/music/MusicRouteGuard";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import "./globals.css";
 
@@ -40,7 +39,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full">
         {children}
         <ServiceWorkerRegister />
-        <MusicRouteGuard />
       </body>
     </html>
   );
