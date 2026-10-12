@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { MusicToggle } from "@/components/music/MusicToggle";
 
 const links = [
   { href: "/", label: "問事清單" },
@@ -29,28 +30,32 @@ export function SiteHeader() {
           <span className="text-sm tracking-widest text-muted">參拜小幫手</span>
         </Link>
 
-        <nav aria-label="網站導覽" className="hidden md:block">
-          <ul className="flex">
-            {links.map(({ href, label }) => (
-              <li key={href}>
-                <Link href={href} aria-current={pathname === href ? "page" : undefined} className={linkClass(href)}>
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <div className="flex items-center">
+          <nav aria-label="網站導覽" className="hidden md:block">
+            <ul className="flex">
+              {links.map(({ href, label }) => (
+                <li key={href}>
+                  <Link href={href} aria-current={pathname === href ? "page" : undefined} className={linkClass(href)}>
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-        <button
-          type="button"
-          className="inline-flex size-11 items-center justify-center text-gold md:hidden"
-          aria-label={open ? "關閉選單" : "開啟選單"}
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? <X size={24} strokeWidth={1.5} aria-hidden /> : <Menu size={24} strokeWidth={1.5} aria-hidden />}
-        </button>
+          <MusicToggle />
+
+          <button
+            type="button"
+            className="inline-flex size-11 items-center justify-center text-gold md:hidden"
+            aria-label={open ? "關閉選單" : "開啟選單"}
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <X size={24} strokeWidth={1.5} aria-hidden /> : <Menu size={24} strokeWidth={1.5} aria-hidden />}
+          </button>
+        </div>
       </div>
 
       {open && (

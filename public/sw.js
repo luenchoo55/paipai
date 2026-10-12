@@ -4,6 +4,7 @@
  * - 安裝時預先快取各頁 HTML，以及 HTML 裡引用的 /_next/static 檔案（JS、CSS）
  * - 頁面：先連網路拿最新版，失敗才用快取（並把最新版存回快取）
  * - /_next/static：檔名含雜湊、內容不變，快取優先
+ * - /audio：背景音樂用分段（Range）下載，交給瀏覽器直接處理，不經快取
  * - 其他同網域的 GET（圖片、字型、圖示）：先回快取、背景更新
  */
 
@@ -92,6 +93,7 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith("/api/")) return;
+  if (url.pathname.startsWith("/audio/")) return;
 
   // 站內換頁的 RSC 資料：不快取（內容依路由狀態而不同）。離線時失敗，Next.js 會改用整頁載入，再由下面的頁面快取接手
   if (request.headers.get("RSC") === "1" || url.searchParams.has("_rsc")) return;
