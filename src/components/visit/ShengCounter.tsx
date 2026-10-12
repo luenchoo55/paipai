@@ -1,11 +1,9 @@
-import { REQUIRED_SHENG } from "@/lib/visit/throwLogic";
-
-/** 連續聖筊計數：三個圓格依序點亮 */
-export function ShengCounter({ count }: { count: number }) {
-  const lit = Math.min(count, REQUIRED_SHENG);
+/** 連續聖筊計數：需要幾個就顯示幾格，聖筊時依序點亮 */
+export function ShengCounter({ count, required }: { count: number; required: number }) {
+  const lit = Math.min(count, required);
   return (
-    <div className="flex items-center justify-center gap-4" role="img" aria-label={`連續聖筊 ${lit} / ${REQUIRED_SHENG}`}>
-      {Array.from({ length: REQUIRED_SHENG }, (_, i) => (
+    <div className="flex items-center justify-center gap-4" role="img" aria-label={`連續聖筊 ${lit} / ${required}`}>
+      {Array.from({ length: required }, (_, i) => (
         <span
           key={i}
           className={`size-9 rounded-full border transition-all duration-300 ${

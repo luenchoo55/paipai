@@ -17,6 +17,7 @@ export type Question = {
   createdAt: string;
   groupId?: string; // AI 產生的同一組問題
   order?: number;
+  important?: boolean; // 重大的事：需連續三個聖筊（一般一個聖筊即可）
 };
 
 export type ThrowResult = "sheng" | "xiao" | "yin";
@@ -28,6 +29,7 @@ export type VisitEntry = {
   questionText: string;
   deityId: string;
   throws: ThrowResult[];
+  requiredSheng?: number; // 應允需要的連續聖筊數；舊紀錄沒有，視為 3
   outcome: Outcome;
   fortuneNumber?: number; // 籤號
   fortunePhoto?: Blob;
@@ -47,7 +49,7 @@ export type VisitDraft = {
   startedAt: string;
   questions: Question[];
   index: number;
-  entries: Record<string, Pick<VisitEntry, "throws" | "fortuneNumber" | "fortunePhoto">>;
+  entries: Record<string, Pick<VisitEntry, "throws" | "fortuneNumber" | "fortunePhoto"> & { important?: boolean }>;
   finishing: boolean;
 };
 

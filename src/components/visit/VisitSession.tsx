@@ -1,6 +1,6 @@
 "use client";
 
-import { CornerDownRight, RotateCcw, Sun } from "lucide-react";
+import { Check, CornerDownRight, RotateCcw, Sun } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -15,7 +15,7 @@ import {
 } from "@/lib/db/repo";
 import { useWakeLock } from "@/lib/hooks/useWakeLock";
 import type { Question, ThrowResult, VisitDraft } from "@/lib/types";
-import { HINT_TEXT, THROW_LABEL, consecutiveSheng, hintOf, isGranted } from "@/lib/visit/throwLogic";
+import { THROW_LABEL, consecutiveSheng, hintOf, hintText, isGranted, requiredSheng } from "@/lib/visit/throwLogic";
 import { FortuneInput } from "./FortuneInput";
 import { ReportCard } from "./ReportCard";
 import { ShengCounter } from "./ShengCounter";
@@ -123,7 +123,9 @@ export function VisitSession() {
   const entry = draft.entries[question.id] ?? { throws: [] };
   const { throws } = entry;
   const deityName = deities.get(question.deityId)?.name ?? "神明";
-  const hint = hintOf(throws);
+  const important = entry.important ?? question.important ?? false;
+  const required = requiredSheng(important);
+  const hint = hintOf(throws, required);
   const followUp =
     hint === "xiao" ? question.followUps?.onXiao : hint === "yin" ? question.followUps?.onYin : undefined;
   const isLast = draft.index === total - 1;
@@ -167,10 +169,25 @@ export function VisitSession() {
       </section>
 
       <div className="space-y-4 py-2">
-        <ShengCounter count={consecutiveSheng(throws)} />
+        <label className="mx-auto flex min-h-11 w-fit cursor-pointer items-center gap-2.5 text-sm text-night-text/80">
+          <input
+            type="checkbox"
+            checked={important}
+            onChange={(e) => setEntry({ important: e.target.checked })}
+            className="peer sr-only"
+          />
+          <span
+            aria-hidden
+            className="flex size-5 shrink-0 items-center justify-center rounded-[2px] border border-gold/70 text-ground transition-colors peer-checked:border-gold peer-checked:bg-gold peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold-bright"
+          >
+            {important && <Check size={14} strokeWidth={3} />}
+          </span>
+          重大的事，需連續三個聖筊
+        </label>
+        <ShengCounter count={consecutiveSheng(throws)} required={required} />
         <div aria-live="polite" className="space-y-3 text-center">
           <p className={`leading-relaxed ${hint === "granted" ? "font-bold text-gold-bright" : "text-night-text/90"}`}>
-            {HINT_TEXT[hint]}
+            {hintText(hint, required)}
           </p>
           {followUp && (
             <div className="rounded-frame border border-gold/40 bg-night-surface/60 p-4 text-left">
@@ -207,7 +224,7 @@ export function VisitSession() {
       />
 
       <ThrowPanel
-        canThrow={!isGranted(throws)}
+        canThrow={!isGranted(throws, required)}
         canUndo={throws.length > 0}
         isLast={isLast}
         onThrow={(r: ThrowResult) => setEntry({ throws: [...throws, r] })}

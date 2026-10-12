@@ -33,6 +33,7 @@ const Question = z.object({
   createdAt: z.string(),
   groupId: z.string().optional(),
   order: z.number().optional(),
+  important: z.boolean().optional(),
 });
 const Throw = z.enum(["sheng", "xiao", "yin"]);
 const Entry = z.object({
@@ -40,6 +41,7 @@ const Entry = z.object({
   questionText: z.string(),
   deityId: z.string(),
   throws: z.array(Throw),
+  requiredSheng: z.number().optional(),
   outcome: z.enum(["granted", "unclear", "declined", "skipped"]),
   fortuneNumber: z.number().optional(),
   fortunePhoto: z.string().startsWith("data:").optional(),

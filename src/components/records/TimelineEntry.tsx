@@ -5,7 +5,7 @@ import { useState } from "react";
 import { addMonths, shortDate } from "@/lib/dates";
 import { updateVisitEntry } from "@/lib/db/repo";
 import type { VisitEntry } from "@/lib/types";
-import { OUTCOME_LABEL } from "@/lib/visit/throwLogic";
+import { outcomeLabel } from "@/lib/visit/throwLogic";
 import { FortunePhoto } from "./FortunePhoto";
 import { ReflectionForm } from "./ReflectionForm";
 
@@ -46,7 +46,7 @@ export function TimelineEntry({
             entry.outcome === "granted" ? "bg-vermilion-soft text-gold-bright" : "bg-ground text-muted"
           }`}
         >
-          {OUTCOME_LABEL[entry.outcome]}
+          {outcomeLabel(entry.outcome, entry.requiredSheng)}
         </span>
         {entry.fortuneNumber !== undefined && (
           <span className="rounded-frame bg-ground px-2 py-1 text-muted">籤詩第 {entry.fortuneNumber} 首</span>

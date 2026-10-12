@@ -3,7 +3,7 @@
 import { ArrowLeft, Check } from "lucide-react";
 import { useState } from "react";
 import type { Deity, VisitDraft } from "@/lib/types";
-import { OUTCOME_LABEL, outcomeOf } from "@/lib/visit/throwLogic";
+import { outcomeLabel, outcomeOf, requiredSheng } from "@/lib/visit/throwLogic";
 
 /** 完成前的總覽：確認每題結果、填廟名，存成紀錄 */
 export function VisitSummary({
@@ -27,7 +27,8 @@ export function VisitSummary({
       <ol className="space-y-3">
         {draft.questions.map((q, i) => {
           const e = draft.entries[q.id];
-          const outcome = outcomeOf(e?.throws ?? []);
+          const required = requiredSheng(e?.important ?? q.important);
+          const outcome = outcomeOf(e?.throws ?? [], required);
           return (
             <li key={q.id} className="rounded-frame border border-night-surface bg-night-surface/50 p-4">
               <p className="text-xs tracking-widest text-muted">
@@ -40,7 +41,7 @@ export function VisitSummary({
                     outcome === "granted" ? "bg-vermilion-soft text-gold-bright" : "bg-night text-night-text/80"
                   }`}
                 >
-                  {OUTCOME_LABEL[outcome]}
+                  {outcomeLabel(outcome, required)}
                 </span>
                 {e?.fortuneNumber !== undefined && (
                   <span className="rounded-frame bg-night px-2 py-1 text-night-text/80">籤詩第 {e.fortuneNumber} 首</span>

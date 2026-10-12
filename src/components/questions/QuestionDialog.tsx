@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Check, Plus, Trash2 } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
@@ -28,6 +28,7 @@ export function QuestionDialog({
   const [deityId, setDeityId] = useState(question?.deityId ?? defaultDeityId ?? deities[0]?.id ?? "");
   const [text, setText] = useState(question?.text ?? "");
   const [note, setNote] = useState(question?.note ?? "");
+  const [important, setImportant] = useState(question?.important ?? false);
   const [customName, setCustomName] = useState("");
   const [customDomain, setCustomDomain] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -44,7 +45,7 @@ export function QuestionDialog({
     setSaving(true);
     try {
       const targetDeityId = custom ? (await addDeity(customName, customDomain || "自訂")).id : deityId;
-      const fields = { deityId: targetDeityId, text: text.trim(), note: note.trim() || undefined };
+      const fields = { deityId: targetDeityId, text: text.trim(), note: note.trim() || undefined, important };
       if (question) await updateQuestion(question.id, fields);
       else await addQuestion(fields);
       onClose();
@@ -117,6 +118,25 @@ export function QuestionDialog({
         <Field label="備註" hint="選填，自己看的提醒">
           <TextInput value={note} onChange={(e) => setNote(e.target.value)} placeholder="例如：記得先說公司名稱" />
         </Field>
+
+        <div>
+          <label className="flex min-h-11 cursor-pointer items-center gap-3">
+            <input
+              type="checkbox"
+              checked={important}
+              onChange={(e) => setImportant(e.target.checked)}
+              className="peer sr-only"
+            />
+            <span
+              aria-hidden
+              className="flex size-5 shrink-0 items-center justify-center rounded-[2px] border border-gold/70 text-ground transition-colors peer-checked:border-gold peer-checked:bg-gold peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold-bright"
+            >
+              {important && <Check size={14} strokeWidth={3} />}
+            </span>
+            <span className="tracking-wider">重大的事，需連續三個聖筊</span>
+          </label>
+          <p className="ml-8 text-sm text-muted">一般的事一個聖筊就代表神明應允。</p>
+        </div>
 
         {error && (
           <p role="alert" className="text-sm text-gold-bright">

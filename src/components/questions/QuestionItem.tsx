@@ -14,7 +14,7 @@ export function QuestionItem({
   step?: number; // AI 問題組裡的第幾步
   onEdit: () => void;
 }) {
-  const { text, note, selected, followUps } = question;
+  const { text, note, selected, followUps, important } = question;
   const hasFollowUps = Boolean(followUps?.onXiao || followUps?.onYin);
 
   return (
@@ -37,6 +37,7 @@ export function QuestionItem({
             <span className="mb-1 block text-xs tracking-widest text-gold">第 {step + 1} 問</span>
           )}
           <span className={`block leading-relaxed ${selected ? "text-ink" : "text-muted"}`}>{text}</span>
+          {important && <span className="mt-1 block text-xs tracking-widest text-gold">重大的事・需三聖筊</span>}
           {note && <span className="mt-1 block text-sm text-muted">{note}</span>}
           {hasFollowUps && (
             <span className="mt-1 flex items-center gap-1 text-xs text-muted">

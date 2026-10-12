@@ -1,6 +1,6 @@
 import { newId } from "@/lib/id";
 import type { Deity, Preferences, Profile, Question, Visit, VisitDraft, VisitEntry, Vow } from "@/lib/types";
-import { outcomeOf } from "@/lib/visit/throwLogic";
+import { outcomeOf, requiredSheng } from "@/lib/visit/throwLogic";
 import { db } from "./db";
 
 const now = () => new Date().toISOString();
@@ -111,12 +111,14 @@ export const clearVisitDraft = () => db.kv.delete("visitDraft");
 export async function finishVisit(draft: VisitDraft, templeName: string): Promise<Visit> {
   const entries: VisitEntry[] = draft.questions.map((q) => {
     const e = draft.entries[q.id] ?? { throws: [] };
+    const required = requiredSheng(e.important ?? q.important);
     return {
       questionId: q.id,
       questionText: q.text,
       deityId: q.deityId,
       throws: e.throws,
-      outcome: outcomeOf(e.throws),
+      requiredSheng: required,
+      outcome: outcomeOf(e.throws, required),
       fortuneNumber: e.fortuneNumber,
       fortunePhoto: e.fortunePhoto,
     };
