@@ -38,6 +38,7 @@ export function TimelineEntry({
   return (
     <li id={`entry-${visitId}-${index}`} className="scroll-mt-24 py-4 first:pt-0 last:pb-0">
       <p className="text-sm tracking-widest text-gold">{deityName}</p>
+      {entry.followUpOf && <p className="mt-1 text-xs leading-relaxed text-muted">接續「{entry.followUpOf}」</p>}
       <p className="mt-1 leading-relaxed">{entry.questionText}</p>
 
       <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">

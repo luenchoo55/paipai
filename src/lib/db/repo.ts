@@ -109,12 +109,14 @@ export const clearVisitDraft = () => db.kv.delete("visitDraft");
 
 /** 把暫存寫成正式紀錄；問過的問題取消勾選，清單留著下次用 */
 export async function finishVisit(draft: VisitDraft, templeName: string): Promise<Visit> {
+  const texts = new Map(draft.questions.map((q) => [q.id, q.text]));
   const entries: VisitEntry[] = draft.questions.map((q) => {
     const e = draft.entries[q.id] ?? { throws: [] };
     const required = requiredSheng(e.important ?? q.important);
     return {
       questionId: q.id,
       questionText: q.text,
+      followUpOf: q.parentId ? texts.get(q.parentId) : undefined,
       deityId: q.deityId,
       throws: e.throws,
       requiredSheng: required,

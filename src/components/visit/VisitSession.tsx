@@ -1,12 +1,13 @@
 "use client";
 
-import { Check, CornerDownRight, RotateCcw, Sun } from "lucide-react";
+import { CornerDownRight, RotateCcw, Sun } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDeities, useProfile } from "@/lib/db/hooks";
 import {
   EMPTY_PROFILE,
+  addQuestion,
   clearVisitDraft,
   finishVisit,
   getVisitDraft,
@@ -16,7 +17,9 @@ import {
 import { useWakeLock } from "@/lib/hooks/useWakeLock";
 import type { Question, ThrowResult, VisitDraft } from "@/lib/types";
 import { THROW_LABEL, consecutiveSheng, hintOf, hintText, isGranted, requiredSheng } from "@/lib/visit/throwLogic";
+import { FollowUpForm } from "./FollowUpForm";
 import { FortuneInput } from "./FortuneInput";
+import { ImportantCheckbox } from "./ImportantCheckbox";
 import { ReportCard } from "./ReportCard";
 import { ShengCounter } from "./ShengCounter";
 import { ThrowPanel } from "./ThrowPanel";
@@ -130,8 +133,27 @@ export function VisitSession() {
     hint === "xiao" ? question.followUps?.onXiao : hint === "yin" ? question.followUps?.onYin : undefined;
   const isLast = draft.index === total - 1;
 
+  const parent = question.parentId ? draft.questions.find((q) => q.id === question.parentId) : undefined;
+
   const setEntry = (changes: Partial<typeof entry>) =>
     update((d) => ({ ...d, entries: { ...d.entries, [question.id]: { ...entry, ...changes } } }));
+
+  /** 衍生問題也存進問事清單；插在這一題後面並直接跳過去 */
+  async function addFollowUp(text: string, isImportant: boolean) {
+    const added = await addQuestion({
+      deityId: question.deityId,
+      text,
+      background: question.background,
+      important: isImportant,
+      parentId: question.id,
+    });
+    update((d) => {
+      const questions = [...d.questions];
+      questions.splice(d.index + 1, 0, added);
+      return { ...d, questions, index: d.index + 1 };
+    });
+    window.scrollTo({ top: 0 });
+  }
 
   return (
     <div className="space-y-6 pb-72 pt-4">
@@ -162,6 +184,12 @@ export function VisitSession() {
 
       <section aria-labelledby="question-text" className="space-y-2 pt-2">
         <p className="text-sm tracking-[0.3em] text-gold/90">向 {deityName} 請示</p>
+        {parent && (
+          <p className="flex items-start gap-1.5 text-sm leading-relaxed text-muted">
+            <CornerDownRight size={14} strokeWidth={1.5} aria-hidden className="mt-1 shrink-0" />
+            接續「{parent.text}」
+          </p>
+        )}
         <h1 id="question-text" className="font-serif text-[30px] font-bold leading-snug tracking-wider">
           {question.text}
         </h1>
@@ -169,21 +197,7 @@ export function VisitSession() {
       </section>
 
       <div className="space-y-4 py-2">
-        <label className="mx-auto flex min-h-11 w-fit cursor-pointer items-center gap-2.5 text-sm text-night-text/80">
-          <input
-            type="checkbox"
-            checked={important}
-            onChange={(e) => setEntry({ important: e.target.checked })}
-            className="peer sr-only"
-          />
-          <span
-            aria-hidden
-            className="flex size-5 shrink-0 items-center justify-center rounded-[2px] border border-gold/70 text-ground transition-colors peer-checked:border-gold peer-checked:bg-gold peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold-bright"
-          >
-            {important && <Check size={14} strokeWidth={3} />}
-          </span>
-          重大的事，需連續三個聖筊
-        </label>
+        <ImportantCheckbox checked={important} onChange={(checked) => setEntry({ important: checked })} />
         <ShengCounter count={consecutiveSheng(throws)} required={required} />
         <div aria-live="polite" className="space-y-3 text-center">
           <p className={`leading-relaxed ${hint === "granted" ? "font-bold text-gold-bright" : "text-night-text/90"}`}>
@@ -199,6 +213,9 @@ export function VisitSession() {
             </div>
           )}
         </div>
+        {throws.length > 0 && (
+          <FollowUpForm key={question.id} suggestion={followUp} onAdd={addFollowUp} />
+        )}
       </div>
 
       {throws.length > 0 && (

@@ -18,6 +18,7 @@ export type Question = {
   groupId?: string; // AI 產生的同一組問題
   order?: number;
   important?: boolean; // 重大的事：需連續三個聖筊（一般一個聖筊即可）
+  parentId?: string; // 參拜時當場追加的衍生問題：從哪一題延伸
 };
 
 export type ThrowResult = "sheng" | "xiao" | "yin";
@@ -27,6 +28,7 @@ export type Outcome = "granted" | "unclear" | "declined" | "skipped";
 export type VisitEntry = {
   questionId: string;
   questionText: string;
+  followUpOf?: string; // 衍生問題：原本那一題的內容
   deityId: string;
   throws: ThrowResult[];
   requiredSheng?: number; // 應允需要的連續聖筊數；舊紀錄沒有，視為 3

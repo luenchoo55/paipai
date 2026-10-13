@@ -33,6 +33,7 @@ export function VisitSummary({
             <li key={q.id} className="rounded-frame border border-night-surface bg-night-surface/50 p-4">
               <p className="text-xs tracking-widest text-muted">
                 {i + 1}．{deities.get(q.deityId)?.name ?? "神明"}
+                {q.parentId && `・接續第 ${draft.questions.findIndex((p) => p.id === q.parentId) + 1} 題`}
               </p>
               <p className="mt-1 leading-relaxed">{q.text}</p>
               <p className="mt-2 flex flex-wrap gap-2 text-xs">
